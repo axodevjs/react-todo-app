@@ -36,7 +36,7 @@ function ToDos(props) {
 
     // Check localstorage
     useEffect(() => {
-        if (localStorage.todos !== null) {
+        if (localStorage.todos !== undefined) {
             let parseTodos = JSON.parse(localStorage.todos);
             setTodos(parseTodos);
         }
