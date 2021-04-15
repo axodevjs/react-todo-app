@@ -40,7 +40,7 @@ function ToDos(props) {
             let parseTodos = JSON.parse(localStorage.todos);
             setTodos(parseTodos);
         }
-    })
+    }, [])
 
     const addTodo = name => {
         const newTodos = [...todos, { name: name, favorite: false }];
