@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ToDo from './ToDo/ToDo'
 import "./ToDos.css";
 
@@ -27,22 +27,36 @@ function AddToDo({ addTodo }) {
 }
 
 function ToDos(props) {
+    const [todos, setTodos] = useState([]);
+
     // Set page title
     if (props.title !== null) {
         document.title = props.title;
     }
 
-    const [todos, setTodos] = useState([]);
+    // Check localstorage
+    useEffect(() => {
+        if (localStorage.todos !== null) {
+            let parseTodos = JSON.parse(localStorage.todos);
+            setTodos(parseTodos);
+        }
+    })
 
     const addTodo = name => {
         const newTodos = [...todos, { name: name, favorite: false }];
         setTodos(newTodos);
+
+        // Add to localStorage
+        localStorage.todos = JSON.stringify(newTodos);
     };
 
     const deleteTodo = (index) => {
         let allTodos = [...todos];
         allTodos.splice(index, 1);
         setTodos(allTodos);
+
+        // Add to localStorage
+        localStorage.todos = JSON.stringify(allTodos);
     }
 
     const favoriteTodo = (index) => {
@@ -61,7 +75,14 @@ function ToDos(props) {
         allTodos.splice(index, 1, Todo);
 
         setTodos(allTodos);
+
+        // Add to localStorage
+        localStorage.todos = JSON.stringify(allTodos);
     }
+
+    let todoList = todos.map((todo, index) => (
+        <ToDo todo={todo} key={index} id={index} onDelete={deleteTodo} onFavorite={favoriteTodo} />
+    ));
 
     return (
         <>
@@ -69,9 +90,7 @@ function ToDos(props) {
                 <div className="title"> {props.title ?? "Без названия"} </div>
 
                 <div className="todos">
-                    {todos.map((todo, index) => (
-                        <ToDo todo={todo} key={index} id={index} onDelete={deleteTodo} onFavorite={favoriteTodo} />
-                    ))}
+                    {todoList}
                 </div>
 
                 <AddToDo addTodo={addTodo} />
